@@ -14,6 +14,10 @@ var VirtualJoystick	= function(opts)
 	this._baseY		= this._stickY = opts.baseY || 0
 	this._limitStickTravel	= opts.limitStickTravel || false
 	this._stickRadius	= opts.stickRadius !== undefined ? opts.stickRadius : 100
+  
+  // Limit stickRadius with the width of the stick canvas
+  this._stickRadius = this._stickRadius - this._stickEl.width/2;
+  
 	this._useCssTransform	= opts.useCssTransform !== undefined ? opts.useCssTransform : false
 
 	this._container.style.position	= "relative"
@@ -159,7 +163,10 @@ VirtualJoystick.prototype._onUp	= function()
 	this._pressed	= false; 
 	//this._stickEl.style.display	= "none";
   this._move(this._stickEl.style, this._baseX - this._stickEl.width/2, this._baseY - this._stickEl.height/2);	
-	
+	this._stickX	= this._baseX;
+  this._stickY	= this._baseY;
+  
+  
 	if(this._stationaryBase == false){	
 		this._baseEl.style.display	= "none";
 	
@@ -270,7 +277,7 @@ VirtualJoystick.prototype._onMouseMove	= function(event)
   if (!event) var event = window.event;
 	if (event.pageX || event.pageY) 	{
 		x = event.pageX - $(this._container).offset().left;
-		y = event.pageY - $(this._container).offset().top;;
+		y = event.pageY - $(this._container).offset().top;
 	}
   
 	return this._onMove(x, y);
@@ -299,8 +306,8 @@ VirtualJoystick.prototype._onTouchStart	= function(event)
 	this._touchIdx	= touch.identifier;
 
 	// forward the action
-	var x		= touch.pageX;
-	var y		= touch.pageY;
+	var x		= touch.pageX - $(this._container).offset().left;
+	var y		= touch.pageY - $(this._container).offset().top;
 	return this._onDown(x, y)
 }
 
@@ -342,8 +349,8 @@ VirtualJoystick.prototype._onTouchMove	= function(event)
 
 	event.preventDefault();
 
-	var x		= touch.pageX;
-	var y		= touch.pageY;
+	var x		= touch.pageX - $(this._container).offset().left;
+	var y		= touch.pageY - $(this._container).offset().top;
 	return this._onMove(x, y)
 }
 
